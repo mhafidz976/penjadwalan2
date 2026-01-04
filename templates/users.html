@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Manajemen User - Sistem Penjadwalan Laboratorium{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-users me-2"></i>Manajemen User</h2>
+            <a href="{{ url_for('add_user') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus me-2"></i>Tambah User
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>Daftar User
+                    <span class="badge bg-secondary ms-2">{{ users|length }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if users %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Username</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Role</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td><strong>{{ user.username }}</strong></td>
+                                    <td>{{ user.full_name }}</td>
+                                    <td>
+                                        {% if user.role == 'admin' %}
+                                            <span class="badge bg-danger">Administrator</span>
+                                        {% elif user.role == 'staff' %}
+                                            <span class="badge bg-warning">Laboratory Staff</span>
+                                        {% elif user.role == 'lecturer' %}
+                                            <span class="badge bg-info">Lecturer</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('edit_user', id=user.id) }}" 
+                                               class="btn btn-sm btn-outline-primary" 
+                                               title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% if user.id != session.user_id %}
+                                            <a href="{{ url_for('delete_user', id=user.id) }}" 
+                                               class="btn btn-sm btn-outline-danger" 
+                                               onclick="return confirm('Apakah Anda yakin ingin menghapus user {{ user.username }}?')"
+                                               title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                        <h5 class="text-muted">Belum ada user tersedia</h5>
+                        <p class="text-muted">Mulai dengan menambah user pertama.</p>
+                        <a href="{{ url_for('add_user') }}" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Tambah User Pertama
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Statistics -->
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-user-shield fa-3x mb-3"></i>
+                <h4>{{ users|selectattr('role', 'equalto', 'admin')|list|length }}</h4>
+                <p class="mb-0">Administrator</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-user-cog fa-3x mb-3"></i>
+                <h4>{{ users|selectattr('role', 'equalto', 'staff')|list|length }}</h4>
+                <p class="mb-0">Laboratory Staff</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-user-tie fa-3x mb-3"></i>
+                <h4>{{ users|selectattr('role', 'equalto', 'lecturer')|list|length }}</h4>
+                <p class="mb-0">Lecturer</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

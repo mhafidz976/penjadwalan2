@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistem Penjadwalan Laboratorium{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+            <div class="text-muted">
+                <i class="fas fa-user me-2"></i>{{ user.full_name }} ({{ user.role.title() }})
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ schedules|length }}</h4>
+                        <p class="mb-0">Total Jadwal</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if user.role in ['admin', 'staff'] %}
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ courses|length if courses else 0 }}</h4>
+                        <p class="mb-0">Mata Kuliah</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-book fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ labs|length if labs else 0 }}</h4>
+                        <p class="mb-0">Laboratorium</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-flask fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if user.role == 'admin' %}
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="mb-0">{{ users|length if users else 0 }}</h4>
+                        <p class="mb-0">Pengguna</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+
+<!-- Quick Actions -->
+{% if user.role in ['admin', 'staff'] %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Aksi Cepat</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('add_schedule') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-plus me-2"></i>Tambah Jadwal
+                        </a>
+                    </div>
+                    {% if user.role == 'admin' %}
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('add_user') }}" class="btn btn-success w-100">
+                            <i class="fas fa-user-plus me-2"></i>Tambah User
+                        </a>
+                    </div>
+                    {% endif %}
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('add_course') }}" class="btn btn-info w-100">
+                            <i class="fas fa-book-medical me-2"></i>Tambah Mata Kuliah
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('add_lab') }}" class="btn btn-warning w-100">
+                            <i class="fas fa-plus-circle me-2"></i>Tambah Lab
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Schedule Overview -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    {% if user.role == 'lecturer' %}Jadwal Saya{% else %}Overview Jadwal{% endif %}
+                </h5>
+                <a href="{{ url_for('schedules') }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-list me-1"></i>Lihat Semua
+                </a>
+            </div>
+            <div class="card-body">
+                {% if schedules %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Mata Kuliah</th>
+                                    <th>Dosen</th>
+                                    <th>Lab</th>
+                                    <th>Hari</th>
+                                    <th>Waktu</th>
+                                    <th>Semester</th>
+                                    {% if user.role in ['admin', 'staff'] %}
+                                    <th>Aksi</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for schedule in schedules[:5] %}
+                                <tr>
+                                    <td>{{ schedule.course.course_name }}</td>
+                                    <td>{{ schedule.lecturer.full_name }}</td>
+                                    <td>{{ schedule.laboratory.lab_name }}</td>
+                                    <td>{{ schedule.day }}</td>
+                                    <td>{{ schedule.time_slot }}</td>
+                                    <td>{{ schedule.semester }}</td>
+                                    {% if user.role in ['admin', 'staff'] %}
+                                    <td>
+                                        <a href="{{ url_for('edit_schedule', id=schedule.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ url_for('delete_schedule', id=schedule.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {% if schedules|length > 5 %}
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('schedules') }}" class="btn btn-primary">
+                            Lihat Semua Jadwal ({{ schedules|length }} total)
+                        </a>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Belum ada jadwal tersedia</p>
+                        {% if user.role in ['admin', 'staff'] %}
+                        <a href="{{ url_for('add_schedule') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Tambah Jadwal Pertama
+                        </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Information -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-info-circle me-2"></i>Tentang Sistem</h6>
+                        <p class="mb-0">Sistem Penjadwalan Laboratorium Komputer<br>
+                        Fakultas Teknologi Informasi<br>
+                        Universitas Bale Bandung</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h6><i class="fas fa-shield-alt me-2"></i>Keamanan</h6>
+                        <p class="mb-0">Sistem dilengkapi dengan:<br>
+                        ✓ Autentikasi multi-role<br>
+                        ✓ Validasi anti-bentrok jadwal<br>
+                        ✓ Enkripsi password</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

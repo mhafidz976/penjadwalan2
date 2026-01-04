@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Manajemen Laboratorium - Sistem Penjadwalan Laboratorium{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-flask me-2"></i>Manajemen Laboratorium</h2>
+            <a href="{{ url_for('add_lab') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Tambah Laboratorium
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>Daftar Laboratorium
+                    <span class="badge bg-secondary ms-2">{{ labs|length }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if labs %}
+                    <div class="row">
+                        {% for lab in labs %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-flask me-2"></i>{{ lab.lab_name }}
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <i class="fas fa-users me-2 text-info"></i>
+                                        <strong>Kapasitas:</strong> {{ lab.capacity }} orang
+                                    </div>
+                                    <div class="mb-3">
+                                        {% set schedule_count = lab.schedules|length %}
+                                        <i class="fas fa-calendar me-2 text-success"></i>
+                                        <strong>Jadwal:</strong> {{ schedule_count }} jadwal
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <a href="{{ url_for('edit_lab', id=lab.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit me-1"></i>Edit
+                                        </a>
+                                        <a href="{{ url_for('delete_lab', id=lab.id) }}" 
+                                           class="btn btn-sm btn-outline-danger" 
+                                           onclick="return confirm('Apakah Anda yakin ingin menghapus laboratorium {{ lab.lab_name }}?')">
+                                            <i class="fas fa-trash me-1"></i>Hapus
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-flask fa-4x text-muted mb-3"></i>
+                        <h5 class="text-muted">Belum ada laboratorium tersedia</h5>
+                        <p class="text-muted">Mulai dengan menambah laboratorium pertama.</p>
+                        <a href="{{ url_for('add_lab') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Tambah Laboratorium Pertama
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Laboratory Statistics -->
+{% if labs %}
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-flask fa-3x mb-3"></i>
+                <h4>{{ labs|length }}</h4>
+                <p class="mb-0">Total Laboratorium</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-3x mb-3"></i>
+                <h4>{{ labs|sum(attribute='capacity') }}</h4>
+                <p class="mb-0">Total Kapasitas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-calendar fa-3x mb-3"></i>
+                <h4>{{ labs|map(attribute='schedules')|map('length')|sum }}</h4>
+                <p class="mb-0">Total Jadwal</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

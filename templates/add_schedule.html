@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Tambah Jadwal - Sistem Penjadwalan Laboratorium{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-plus me-2"></i>Tambah Jadwal Baru</h2>
+            <a href="{{ url_for('schedules') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Kembali
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-calendar-plus me-2"></i>Form Tambah Jadwal</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="scheduleForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="course_id" class="form-label">
+                                <i class="fas fa-book me-2"></i>Mata Kuliah <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="course_id" name="course_id" required>
+                                <option value="">-- Pilih Mata Kuliah --</option>
+                                {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.course_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="lecturer_id" class="form-label">
+                                <i class="fas fa-user-tie me-2"></i>Dosen <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="lecturer_id" name="lecturer_id" required>
+                                <option value="">-- Pilih Dosen --</option>
+                                {% for lecturer in lecturers %}
+                                <option value="{{ lecturer.id }}">{{ lecturer.full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="lab_id" class="form-label">
+                                <i class="fas fa-flask me-2"></i>Laboratorium <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="lab_id" name="lab_id" required>
+                                <option value="">-- Pilih Laboratorium --</option>
+                                {% for lab in labs %}
+                                <option value="{{ lab.id }}" data-capacity="{{ lab.capacity }}">{{ lab.lab_name }} (Kapasitas: {{ lab.capacity }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="semester" class="form-label">
+                                <i class="fas fa-graduation-cap me-2"></i>Semester <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="semester" name="semester" required>
+                                <option value="">-- Pilih Semester --</option>
+                                <option value="Ganjil 2024/2025">Ganjil 2024/2025</option>
+                                <option value="Genap 2024/2025">Genap 2024/2025</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="day" class="form-label">
+                                <i class="fas fa-calendar-day me-2"></i>Hari <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="day" name="day" required>
+                                <option value="">-- Pilih Hari --</option>
+                                <option value="Senin">Senin</option>
+                                <option value="Selasa">Selasa</option>
+                                <option value="Rabu">Rabu</option>
+                                <option value="Kamis">Kamis</option>
+                                <option value="Jumat">Jumat</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="time_slot" class="form-label">
+                                <i class="fas fa-clock me-2"></i>Slot Waktu <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="time_slot" name="time_slot" required>
+                                <option value="">-- Pilih Waktu --</option>
+                                <option value="07:00-09:00">07:00-09:00</option>
+                                <option value="09:00-11:00">09:00-11:00</option>
+                                <option value="11:00-13:00">11:00-13:00</option>
+                                <option value="13:00-15:00">13:00-15:00</option>
+                                <option value="15:00-17:00">15:00-17:00</option>
+                                <option value="17:00-19:00">17:00-19:00</option>
+                                <option value="19:00-21:00">19:00-21:00</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Informasi:</strong> Sistem akan secara otomatis memeriksa konflik jadwal pada laboratorium dan dosen yang sama.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('schedules') }}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Batal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Simpan Jadwal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Conflict Check Info -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Validasi Konflik</h6>
+            </div>
+            <div class="card-body">
+                <h6>Yang akan dicek:</h6>
+                <ul class="mb-0">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Laboratorium tidak bentrok</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Dosen tidak bentrok</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Waktu tersedia</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Time Slots Reference -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Referensi Waktu</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Slot</th>
+                            <th>Jam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>07:00-09:00</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>09:00-11:00</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>11:00-13:00</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>13:00-15:00</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>15:00-17:00</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>17:00-19:00</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>19:00-21:00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+    const form = e.target;
+    const labId = document.getElementById('lab_id').value;
+    const day = document.getElementById('day').value;
+    const timeSlot = document.getElementById('time_slot').value;
+    const semester = document.getElementById('semester').value;
+    const lecturerId = document.getElementById('lecturer_id').value;
+    
+    if (!labId || !day || !timeSlot || !semester || !lecturerId) {
+        e.preventDefault();
+        alert('Mohon lengkapi semua field yang wajib diisi!');
+        return false;
+    }
+    
+    // Show loading state
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+    submitBtn.disabled = true;
+});
+</script>
+{% endblock %}

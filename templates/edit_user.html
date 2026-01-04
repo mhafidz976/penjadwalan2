@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User - Sistem Penjadwalan Laboratorium{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-edit me-2"></i>Edit User</h2>
+            <a href="{{ url_for('users') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Kembali
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Form Edit User</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user me-2"></i>Username <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   value="{{ user.username }}" required>
+                            <div class="form-text">Username harus unik dan tidak mengandung spasi.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="full_name" class="form-label">
+                                <i class="fas fa-id-card me-2"></i>Nama Lengkap <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="full_name" name="full_name" 
+                                   value="{{ user.full_name }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Kosongkan jika tidak ingin mengubah">
+                            <div class="form-text">Minimal 6 karakter. Kosongkan untuk tetap menggunakan password lama.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="role" class="form-label">
+                                <i class="fas fa-user-tag me-2"></i>Role <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="">-- Pilih Role --</option>
+                                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrator</option>
+                                <option value="staff" {% if user.role == 'staff' %}selected{% endif %}>Laboratory Staff</option>
+                                <option value="lecturer" {% if user.role == 'lecturer' %}selected{% endif %}>Lecturer</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Perhatian:</strong> Mengubah role user akan mempengaruhi hak aksesnya ke sistem.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('users') }}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Batal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Update User
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Current User Info -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informasi User Saat Ini</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <td><strong>Username:</strong></td>
+                        <td>{{ user.username }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nama:</strong></td>
+                        <td>{{ user.full_name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Role:</strong></td>
+                        <td>
+                            {% if user.role == 'admin' %}
+                                <span class="badge bg-danger">Administrator</span>
+                            {% elif user.role == 'staff' %}
+                                <span class="badge bg-warning">Laboratory Staff</span>
+                            {% elif user.role == 'lecturer' %}
+                                <span class="badge bg-info">Lecturer</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>User ID:</strong></td>
+                        <td>{{ user.id }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
+    
+    if (password && password.length < 6) {
+        e.preventDefault();
+        alert('Password minimal 6 karakter!');
+        return false;
+    }
+    
+    if (!role) {
+        e.preventDefault();
+        alert('Role harus dipilih!');
+        return false;
+    }
+});
+</script>
+{% endblock %}

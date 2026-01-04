@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Tambah User - Sistem Penjadwalan Laboratorium{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-user-plus me-2"></i>Tambah User Baru</h2>
+            <a href="{{ url_for('users') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Kembali
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-user-plus me-2"></i>Form Tambah User</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user me-2"></i>Username <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                            <div class="form-text">Username harus unik dan tidak mengandung spasi.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="full_name" class="form-label">
+                                <i class="fas fa-id-card me-2"></i>Nama Lengkap <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="full_name" name="full_name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                            <div class="form-text">Minimal 6 karakter.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="confirm_password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Konfirmasi Password <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required minlength="6">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="role" class="form-label">
+                                <i class="fas fa-user-tag me-2"></i>Role <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="">-- Pilih Role --</option>
+                                <option value="admin">Administrator</option>
+                                <option value="staff">Laboratory Staff</option>
+                                <option value="lecturer">Lecturer</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Informasi Role:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li><strong>Administrator:</strong> Akses penuh ke semua fitur</li>
+                            <li><strong>Laboratory Staff:</strong> Kelola lab, mata kuliah, dan jadwal</li>
+                            <li><strong>Lecturer:</strong> Lihat jadwal mengajar pribadi</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('users') }}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Batal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Simpan User
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Role Information -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Hak Akses Role</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="text-danger"><i class="fas fa-user-shield me-2"></i>Administrator</h6>
+                    <ul class="small">
+                        <li>✓ Manajemen user</li>
+                        <li>✓ Manajemen laboratorium</li>
+                        <li>✓ Manajemen mata kuliah</li>
+                        <li>✓ Manajemen jadwal</li>
+                        <li>✓ Laporan statistik</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-warning"><i class="fas fa-user-cog me-2"></i>Laboratory Staff</h6>
+                    <ul class="small">
+                        <li>✗ Manajemen user</li>
+                        <li>✓ Manajemen laboratorium</li>
+                        <li>✓ Manajemen mata kuliah</li>
+                        <li>✓ Manajemen jadwal</li>
+                        <li>✓ Lihat jadwal</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-info"><i class="fas fa-user-tie me-2"></i>Lecturer</h6>
+                    <ul class="small">
+                        <li>✗ Manajemen user</li>
+                        <li>✗ Manajemen laboratorium</li>
+                        <li>✗ Manajemen mata kuliah</li>
+                        <li>✗ Manajemen jadwal</li>
+                        <li>✓ Lihat jadwal pribadi</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    
+    if (password !== confirmPassword) {
+        e.preventDefault();
+        alert('Password dan konfirmasi password tidak cocok!');
+        return false;
+    }
+    
+    if (password.length < 6) {
+        e.preventDefault();
+        alert('Password minimal 6 karakter!');
+        return false;
+    }
+});
+</script>
+{% endblock %}
