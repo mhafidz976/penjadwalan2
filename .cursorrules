@@ -1,0 +1,44 @@
+# Project Rules: Penjadwalan Lab
+
+These rules are automatically enforced for this project.
+
+## 🛠 Technology Stack
+- **Backend Framework**: Flask (Python)
+- **Database**: SQLite with SQLAlchemy (defined in `app.py`)
+- **Frontend**: 
+  - HTML using Jinja2 templates (`templates/` directory)
+  - CSS Framework: Bootstrap (classes like `row`, `col`, `card`, `btn`)
+  - Icons: FontAwesome (`fas fa-*`)
+- **Authentication**: Custom session-based auth with `werkzeug.security` for hashing.
+
+## 📝 Coding Standards
+### Python (Backend)
+- **File Structure**: Keep all application logic in `app.py` unless it becomes too large.
+- **Views**: Use function-based views with `@app.route` decorators.
+- **Authorization**: ALWAYS use the `@role_required` decorator for protected routes.
+- **Variables**: Use snake_case for Python variables and functions (e.g., `user_id`, `add_schedule`).
+- **Models**: Define models in `app.py` inheriting from `db.Model`.
+- **Flash Messages**: Use `flash(message, category)` for user feedback. 
+  - Categories: `success`, `danger`, `info`, `warning`.
+
+### HTML/Jinja2 (Frontend)
+- **Inheritance**: Extend `base.html` for all new pages.
+- **Blocks**: Use `{% block content %}` for page specific content.
+- **Data Display**: Use `{{ variable }}` for outputting data.
+- **Loops/Conditionals**: Use `{% for %}` and `{% if %}`.
+
+## 🌍 Language & Localization
+- **Code**: Write code, variable names, and comments in **English** (e.g., `class Schedule`, `def login()`).
+- **User Interface**: Write all user-facing text, labels, and flash messages in **Indonesian** (e.g., "Login berhasil", "Daftar Jadwal", "Silakan login").
+
+## 🚀 Workflow & Best Practices
+1. **Validation**: Check for conflicts *before* committing to the database (e.g. check if a schedule slot is taken).
+2. **Security**: Never store plain text passwords; use `generate_password_hash`.
+3. **Initialization**: The `init_sample_data()` function in `app.py` initializes the DB with sample data if empty.
+4. **Imports**: Keep imports organized at the top of `app.py`.
+
+## 📂 Directory Structure
+- `app.py`: Main application entry point and logic.
+- `templates/`: HTML templates.
+- `static/`: Static assets (CSS, JS, Images).
+- `instance/`: Database storage.
