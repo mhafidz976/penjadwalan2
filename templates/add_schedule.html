@@ -34,7 +34,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        
+
                         <div class="col-md-6 mb-3">
                             <label for="lecturer_id" class="form-label">
                                 <i class="fas fa-user-tie me-2"></i>Dosen <span class="text-danger">*</span>
@@ -47,7 +47,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="lab_id" class="form-label">
@@ -56,23 +56,25 @@
                             <select class="form-select" id="lab_id" name="lab_id" required>
                                 <option value="">-- Pilih Laboratorium --</option>
                                 {% for lab in labs %}
-                                <option value="{{ lab.id }}" data-capacity="{{ lab.capacity }}">{{ lab.lab_name }} (Kapasitas: {{ lab.capacity }})</option>
+                                <option value="{{ lab.id }}" data-capacity="{{ lab.capacity }}">{{ lab.lab_name }}
+                                    (Kapasitas: {{ lab.capacity }})</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        
+
                         <div class="col-md-6 mb-3">
                             <label for="semester" class="form-label">
                                 <i class="fas fa-graduation-cap me-2"></i>Semester <span class="text-danger">*</span>
                             </label>
                             <select class="form-select" id="semester" name="semester" required>
                                 <option value="">-- Pilih Semester --</option>
-                                <option value="Ganjil 2024/2025">Ganjil 2024/2025</option>
-                                <option value="Genap 2024/2025">Genap 2024/2025</option>
+                                {% for i in range(1, 9) %}
+                                <option value="{{ i }}">Semester {{ i }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="day" class="form-label">
@@ -85,9 +87,10 @@
                                 <option value="Rabu">Rabu</option>
                                 <option value="Kamis">Kamis</option>
                                 <option value="Jumat">Jumat</option>
+                                <option value="Sabtu">Sabtu</option>
                             </select>
                         </div>
-                        
+
                         <div class="col-md-6 mb-3">
                             <label for="time_slot" class="form-label">
                                 <i class="fas fa-clock me-2"></i>Slot Waktu <span class="text-danger">*</span>
@@ -104,12 +107,13 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
-                        <strong>Informasi:</strong> Sistem akan secara otomatis memeriksa konflik jadwal pada laboratorium dan dosen yang sama.
+                        <strong>Informasi:</strong> Sistem akan secara otomatis memeriksa konflik jadwal pada
+                        laboratorium dan dosen yang sama.
                     </div>
-                    
+
                     <div class="d-flex justify-content-between">
                         <a href="{{ url_for('schedules') }}" class="btn btn-secondary">
                             <i class="fas fa-times me-2"></i>Batal
@@ -122,7 +126,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
         <!-- Conflict Check Info -->
         <div class="card mb-4">
@@ -138,7 +142,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <!-- Time Slots Reference -->
         <div class="card">
             <div class="card-header bg-info text-white">
@@ -189,24 +193,24 @@
 </div>
 
 <script>
-document.getElementById('scheduleForm').addEventListener('submit', function(e) {
-    const form = e.target;
-    const labId = document.getElementById('lab_id').value;
-    const day = document.getElementById('day').value;
-    const timeSlot = document.getElementById('time_slot').value;
-    const semester = document.getElementById('semester').value;
-    const lecturerId = document.getElementById('lecturer_id').value;
-    
-    if (!labId || !day || !timeSlot || !semester || !lecturerId) {
-        e.preventDefault();
-        alert('Mohon lengkapi semua field yang wajib diisi!');
-        return false;
-    }
-    
-    // Show loading state
-    const submitBtn = form.querySelector('button[type="submit"]');
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
-    submitBtn.disabled = true;
-});
+    document.getElementById('scheduleForm').addEventListener('submit', function (e) {
+        const form = e.target;
+        const labId = document.getElementById('lab_id').value;
+        const day = document.getElementById('day').value;
+        const timeSlot = document.getElementById('time_slot').value;
+        const semester = document.getElementById('semester').value;
+        const lecturerId = document.getElementById('lecturer_id').value;
+
+        if (!labId || !day || !timeSlot || !semester || !lecturerId) {
+            e.preventDefault();
+            alert('Mohon lengkapi semua field yang wajib diisi!');
+            return false;
+        }
+
+        // Show loading state
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+        submitBtn.disabled = true;
+    });
 </script>
 {% endblock %}

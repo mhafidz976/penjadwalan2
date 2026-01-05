@@ -268,14 +268,27 @@ def schedules():
     
     user = User.query.get(session['user_id'])
     
-    if user.role == 'lecturer':
-        # Dosen hanya bisa lihat jadwalnya sendiri
-        schedules = Schedule.query.filter_by(lecturer_id=user.id).all()
-    else:
-        # Admin dan staff bisa lihat semua jadwal
-        schedules = Schedule.query.all()
+    query = Schedule.query
     
-    return render_template('schedules.html', schedules=schedules, user=user)
+    # Filter logic
+    if user.role == 'lecturer':
+        query = query.filter_by(lecturer_id=user.id)
+        
+    # Apply filters from request args
+    semester = request.args.get('semester')
+    lab_id = request.args.get('lab_id')
+    day = request.args.get('day')
+    
+    if semester:
+        query = query.filter_by(semester=semester)
+    if lab_id:
+        query = query.filter_by(lab_id=lab_id)
+    if day:
+        query = query.filter_by(day=day)
+        
+    schedules = query.all()
+    
+    return render_template('schedules.html', schedules=schedules, user=user, labs=Lab.query.all())
 
 @app.route('/schedules/add', methods=['GET', 'POST'])
 @role_required('admin', 'staff')
