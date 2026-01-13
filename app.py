@@ -32,7 +32,10 @@ class Lab(db.Model):
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(20), unique=True, nullable=False)
     course_name = db.Column(db.String(100), nullable=False)
+    semester = db.Column(db.Integer, nullable=False)  # 1-8
+    sks = db.Column(db.Integer, nullable=False)  # 1-4
     
     # Relasi dengan schedule
     schedules = db.relationship('Schedule', backref='course', lazy=True)
@@ -44,7 +47,7 @@ class Schedule(db.Model):
     lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=False)
     day = db.Column(db.String(10), nullable=False)  # Senin, Selasa, etc.
     time_slot = db.Column(db.String(20), nullable=False)  # 08:00-10:00, etc.
-    semester = db.Column(db.String(20), nullable=False)  # Ganjil 2024/2025, etc.
+    class_name = db.Column(db.String(5), nullable=False)  # A, B, C
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # Decorator untuk role-based access
@@ -226,9 +229,17 @@ def courses():
 @role_required('admin', 'staff')
 def add_course():
     if request.method == 'POST':
+        code = request.form['code']
         course_name = request.form['course_name']
+        semester = request.form['semester']
+        sks = request.form['sks']
         
-        new_course = Course(course_name=course_name)
+        # Cek kode unik
+        if Course.query.filter_by(code=code).first():
+            flash('Kode mata kuliah sudah ada!', 'danger')
+            return redirect(url_for('add_course'))
+        
+        new_course = Course(code=code, course_name=course_name, semester=semester, sks=sks)
         db.session.add(new_course)
         db.session.commit()
         
@@ -243,7 +254,16 @@ def edit_course(id):
     course = Course.query.get_or_404(id)
     
     if request.method == 'POST':
+        new_code = request.form['code']
+        # Cek unik jika kode berubah
+        if new_code != course.code and Course.query.filter_by(code=new_code).first():
+            flash('Kode mata kuliah sudah digunakan!', 'danger')
+            return redirect(url_for('edit_course', id=id))
+
+        course.code = new_code
         course.course_name = request.form['course_name']
+        course.semester = request.form['semester']
+        course.sks = request.form['sks']
         db.session.commit()
         
         flash('Mata kuliah berhasil diperbarui!', 'success')
@@ -275,12 +295,9 @@ def schedules():
         query = query.filter_by(lecturer_id=user.id)
         
     # Apply filters from request args
-    semester = request.args.get('semester')
     lab_id = request.args.get('lab_id')
     day = request.args.get('day')
     
-    if semester:
-        query = query.filter_by(semester=semester)
     if lab_id:
         query = query.filter_by(lab_id=lab_id)
     if day:
@@ -299,14 +316,13 @@ def add_schedule():
         lab_id = request.form['lab_id']
         day = request.form['day']
         time_slot = request.form['time_slot']
-        semester = request.form['semester']
+        class_name = request.form['class_name']
         
         # Cek konflik jadwal
         conflict = Schedule.query.filter_by(
             lab_id=lab_id, 
             day=day, 
-            time_slot=time_slot,
-            semester=semester
+            time_slot=time_slot
         ).first()
         
         if conflict:
@@ -317,8 +333,7 @@ def add_schedule():
         lecturer_conflict = Schedule.query.filter_by(
             lecturer_id=lecturer_id,
             day=day,
-            time_slot=time_slot,
-            semester=semester
+            time_slot=time_slot
         ).first()
         
         if lecturer_conflict:
@@ -331,7 +346,7 @@ def add_schedule():
             lab_id=lab_id,
             day=day,
             time_slot=time_slot,
-            semester=semester
+            class_name=class_name
         )
         
         db.session.add(new_schedule)
@@ -360,14 +375,13 @@ def edit_schedule(id):
         schedule.lab_id = request.form['lab_id']
         schedule.day = request.form['day']
         schedule.time_slot = request.form['time_slot']
-        schedule.semester = request.form['semester']
+        schedule.class_name = request.form['class_name']
         
         # Cek konflik (kecuali dengan jadwal yang sedang diedit)
         conflict = Schedule.query.filter(
             Schedule.lab_id == schedule.lab_id,
             Schedule.day == schedule.day,
             Schedule.time_slot == schedule.time_slot,
-            Schedule.semester == schedule.semester,
             Schedule.id != schedule.id
         ).first()
         
@@ -380,7 +394,6 @@ def edit_schedule(id):
             Schedule.lecturer_id == schedule.lecturer_id,
             Schedule.day == schedule.day,
             Schedule.time_slot == schedule.time_slot,
-            Schedule.semester == schedule.semester,
             Schedule.id != schedule.id
         ).first()
         
@@ -433,47 +446,164 @@ def init_sample_data():
         )
         db.session.add(staff)
         
-        # Create sample lecturers
+        # Create Lecturers
         lecturers = [
-            User(username='dosen1', password=generate_password_hash('dosen123'), role='lecturer', full_name='Dr. Ahmad Budi'),
-            User(username='dosen2', password=generate_password_hash('dosen123'), role='lecturer', full_name='Dr. Siti Nurhaliza'),
-            User(username='dosen3', password=generate_password_hash('dosen123'), role='lecturer', full_name='Dr. Budi Santoso'),
+            {'username': 'bayu', 'name': 'Mohammad Bayu A, S.Kom, M.Kom'},
+            {'username': 'sutiyono', 'name': 'Sutiyono, ST, M.Kom'},
+            {'username': 'khilda', 'name': 'Khilda Nistrina, S.Pd., M.Sc'},
+            {'username': 'ahmad', 'name': 'Ahmad Faojan M, S.Kom'},
+            {'username': 'rosmalina', 'name': 'Rosmalina, ST., M.Kom'},
+            {'username': 'denny', 'name': 'Denny Rusdianto, ST., M.Kom'},
+            {'username': 'cecep', 'name': 'Cecep Suwanda, S.Si., M.Kom'},
         ]
         
-        for lecturer in lecturers:
-            db.session.add(lecturer)
+        lecturer_objs = {}
+        for l in lecturers:
+            user = User(
+                username=l['username'],
+                password=generate_password_hash('123456'),
+                role='lecturer',
+                full_name=l['name']
+            )
+            db.session.add(user)
+            lecturer_objs[l['username']] = user
         
-        # Create predefined courses
-        courses_data = [
-            'Introduction to Information Technology',
-            'Programming Fundamentals', 
-            'Data Structures',
-            'Database Systems',
-            'Web Programming',
-            'Computer Networks',
-            'Operating Systems',
-            'Software Engineering',
-            'Artificial Intelligence',
-            'Human-Computer Interaction'
-        ]
-        
-        for course_name in courses_data:
-            course = Course(course_name=course_name)
-            db.session.add(course)
-        
-        # Create sample laboratories
+        db.session.commit() # Commit to get IDs
+
+        # Create Laboratories
         labs = [
             Lab(lab_name='Lab Komputer 1', capacity=30),
-            Lab(lab_name='Lab Komputer 2', capacity=25),
-            Lab(lab_name='Lab Komputer 3', capacity=20),
-            Lab(lab_name='Lab Jaringan', capacity=15),
+            Lab(lab_name='Lab Komputer 2', capacity=30),
+        ]
+        db.session.add_all(labs)
+        db.session.commit()
+        
+        lab1 = labs[0]
+        lab2 = labs[1]
+
+        # Create Courses
+        # Format: (Code, Name, Semester, SKS)
+        courses_data = [
+            ('MM01', 'Praktikum Sistem Multimedia', 3, 3),
+            ('GD01', 'Praktikum Pengantar Pemograman Game', 3, 3),
+            ('ML01', 'Praktikum Pembelajaran Mesin', 5, 3),
+            ('PV01', 'Praktikum Pemograman Visual', 5, 3),
+            ('OS01', 'Praktikum Sistem Operasi dan Jaringan Komputer', 5, 3),
+            ('IOT1', 'Praktikum IoT', 7, 3),
+            ('PS01', 'Praktikum Pemodelan dan Simulasi', 5, 3),
+            ('SP01', 'Praktikum Statistik & Probabilitas', 1, 3),
+            ('GH01', 'Praktikum GitHub', 3, 2),
+            ('BD01', 'Praktikum Sistem Basis Data', 3, 3),
+            ('ADK1', 'Praktikum Aplikasi Dasar Komputer', 3, 3),
+            ('SIG1', 'Praktikum Sistem Informasi Geografis', 7, 3),
+            ('APSI', 'Praktikum Analisis dan Perancangan SI', 3, 3),
+            ('ALGO', 'Praktikum Algoritma dan Pemrograman 1', 1, 3),
+            ('DA01', 'Praktikum Data Analisis Dasar', 1, 3),
+            ('PPSI', 'Praktikum Pengelolaan Proyek SI', 5, 3),
+            ('AK01', 'Praktikum Akuntansi', 1, 3),
+            ('BPTR', 'Praktikum Bahasa Pemograman Tingkat Rendah', 3, 3),
         ]
         
-        for lab in labs:
-            db.session.add(lab)
+        course_objs = {}
+        for code, name, sem, sks in courses_data:
+            course = Course(code=code, course_name=name, semester=sem, sks=sks)
+            db.session.add(course)
+            course_objs[name] = course # Map by name for easy lookup
         
         db.session.commit()
-        print('Database berhasil diinisialisasi dengan data sampel!')
+
+        # Helper to get course by partial name pattern if needed, but we used exact names above
+        def get_course(name):
+            return course_objs.get(name)
+
+        # Helper to create schedule
+        def create_sched(lab, day, time, course_name, lecturer_user, class_name):
+            course = get_course(course_name)
+            lecturer = lecturer_objs[lecturer_user]
+            if course and lecturer:
+                sched = Schedule(
+                    course_id=course.id,
+                    lecturer_id=lecturer.id,
+                    lab_id=lab.id,
+                    day=day,
+                    time_slot=time,
+                    class_name=class_name
+                )
+                db.session.add(sched)
+
+        # --- LAB 1 SCHEDULES ---
+        # Senin
+        create_sched(lab1, 'Senin', '08:00-09:40', 'Praktikum Sistem Multimedia', 'bayu', 'B') # 3B inferred
+        create_sched(lab1, 'Senin', '10:00-11:40', 'Praktikum Sistem Multimedia', 'bayu', 'A') # 3A inferred
+        create_sched(lab1, 'Senin', '13:00-14:40', 'Praktikum Pengantar Pemograman Game', 'sutiyono', 'A') # 3A
+        create_sched(lab1, 'Senin', '15:00-16:40', 'Praktikum Pengantar Pemograman Game', 'sutiyono', 'B') # 3B
+        create_sched(lab1, 'Senin', '17:00-18:40', 'Praktikum Sistem Multimedia', 'bayu', 'C') # 3C
+        
+        # Selasa
+        create_sched(lab1, 'Selasa', '08:00-09:40', 'Praktikum Pembelajaran Mesin', 'bayu', 'A')
+        create_sched(lab1, 'Selasa', '13:00-14:40', 'Praktikum Pembelajaran Mesin', 'bayu', 'B')
+        create_sched(lab1, 'Selasa', '15:00-16:40', 'Praktikum Pemograman Visual', 'khilda', 'A') # 5PAGI
+        create_sched(lab1, 'Selasa', '17:00-18:40', 'Praktikum Sistem Operasi dan Jaringan Komputer', 'ahmad', 'C') 
+        
+        # Rabu
+        create_sched(lab1, 'Rabu', '10:00-11:40', 'Praktikum IoT', 'sutiyono', 'A')
+        create_sched(lab1, 'Rabu', '13:00-14:40', 'Praktikum IoT', 'sutiyono', 'B')
+        create_sched(lab1, 'Rabu', '17:00-18:40', 'Praktikum IoT', 'sutiyono', 'C')
+        # 19:00 Pemodelan dan Simulasi (Bayu) 5C - skipped or mapped to 17:00 if allowed (but 17:00 taken). Skipped.
+        
+        # Jumat
+        create_sched(lab1, 'Jumat', '08:00-09:40', 'Praktikum GitHub', 'sutiyono', 'A') # ?PAGI
+        create_sched(lab1, 'Jumat', '10:00-11:40', 'Praktikum Sistem Basis Data', 'sutiyono', 'A') # 5PAGI
+        create_sched(lab1, 'Jumat', '15:00-16:40', 'Praktikum Aplikasi Dasar Komputer', 'denny', 'A') # 3PAGI
+        create_sched(lab1, 'Jumat', '17:00-18:40', 'Praktikum Sistem Informasi Geografis', 'ahmad', 'C')
+        
+        # Sabtu
+        create_sched(lab1, 'Sabtu', '08:00-09:40', 'Praktikum Aplikasi Dasar Komputer', 'denny', 'A') # 3SORE (A)
+        create_sched(lab1, 'Sabtu', '10:00-11:40', 'Praktikum Pemodelan dan Simulasi', 'bayu', 'A') # 5A
+        create_sched(lab1, 'Sabtu', '13:00-14:40', 'Praktikum Analisis dan Perancangan SI', 'denny', 'A') # 3PAGI
+        create_sched(lab1, 'Sabtu', '17:00-18:40', 'Praktikum Analisis dan Perancangan SI', 'denny', 'C') # 3SORE
+        
+        # --- LAB 2 SCHEDULES ---
+        # Senin
+        create_sched(lab2, 'Senin', '08:00-09:40', 'Praktikum Data Analisis Dasar', 'sutiyono', 'B') # 1B
+        create_sched(lab2, 'Senin', '10:00-11:40', 'Praktikum Aplikasi Dasar Komputer', 'sutiyono', 'B') # 1B
+        create_sched(lab2, 'Senin', '13:00-14:40', 'Praktikum GitHub', 'sutiyono', 'B') # 7B
+        create_sched(lab2, 'Senin', '15:00-16:40', 'Praktikum Data Analisis Dasar', 'sutiyono', 'A') # 1A
+        create_sched(lab2, 'Senin', '17:00-18:40', 'Praktikum Aplikasi Dasar Komputer', 'sutiyono', 'C') # 1C
+        
+        # Selasa
+        create_sched(lab2, 'Selasa', '08:00-09:40', 'Praktikum Sistem Basis Data', 'sutiyono', 'A') # 5A
+        create_sched(lab2, 'Selasa', '10:00-11:40', 'Praktikum Pengelolaan Proyek SI', 'rosmalina', 'A') # 7PAGI
+        create_sched(lab2, 'Selasa', '13:00-14:40', 'Praktikum Sistem Basis Data', 'sutiyono', 'B') # 5B
+        create_sched(lab2, 'Selasa', '15:00-16:40', 'Praktikum Aplikasi Dasar Komputer', 'sutiyono', 'A') # 1A
+        create_sched(lab2, 'Selasa', '17:00-18:40', 'Praktikum Sistem Basis Data', 'sutiyono', 'C') # 5C
+        
+        # Rabu
+        create_sched(lab2, 'Rabu', '08:00-09:40', 'Praktikum GitHub', 'sutiyono', 'A') # 7A
+        create_sched(lab2, 'Rabu', '10:00-11:40', 'Praktikum Statistik & Probabilitas', 'rosmalina', 'A') # 1PAGI
+        create_sched(lab2, 'Rabu', '13:00-14:40', 'Praktikum Analisis Data', 'sutiyono', 'A') # ?PAGI
+        create_sched(lab2, 'Rabu', '15:00-16:40', 'Praktikum Akuntansi', 'khilda', 'A') # 3PAGI
+        
+        # Kamis
+        create_sched(lab2, 'Kamis', '08:00-09:40', 'Praktikum Algoritma dan Pemrograman 1', 'cecep', 'A') # 1PAGI
+        create_sched(lab2, 'Kamis', '10:00-11:40', 'Praktikum Algoritma dan Pemrograman 1', 'ahmad', 'A') # 1A
+        create_sched(lab2, 'Kamis', '13:00-14:40', 'Praktikum Algoritma dan Pemrograman 1', 'ahmad', 'B') # 1B
+        create_sched(lab2, 'Kamis', '15:00-16:40', 'Praktikum Sistem Operasi dan Jaringan Komputer', 'sutiyono', 'A') # 5PAGI
+        create_sched(lab2, 'Kamis', '17:00-18:40', 'Praktikum Algoritma dan Pemrograman 1', 'ahmad', 'C') # 1C
+        
+        # Jumat
+        create_sched(lab2, 'Jumat', '08:00-09:40', 'Praktikum Sistem Informasi Geografis', 'ahmad', 'A') # 7A
+        create_sched(lab2, 'Jumat', '10:00-11:40', 'Praktikum Sistem Informasi Geografis', 'ahmad', 'B') # 7B
+        create_sched(lab2, 'Jumat', '17:00-18:40', 'Praktikum Sistem Basis Data', 'sutiyono', 'C') # ?SORE ?? Duplicate? Image has Basis Data at 17:00
+        
+        # Sabtu
+        create_sched(lab2, 'Sabtu', '08:00-09:40', 'Praktikum Sistem Operasi dan Jaringan Komputer', 'ahmad', 'A') # ?
+        create_sched(lab2, 'Sabtu', '10:00-11:40', 'Praktikum Sistem Operasi dan Jaringan Komputer', 'ahmad', 'B') # 5B
+        create_sched(lab2, 'Sabtu', '13:00-14:40', 'Praktikum Bahasa Pemograman Tingkat Rendah', 'ahmad', 'B') # ?
+        create_sched(lab2, 'Sabtu', '15:00-16:40', 'Praktikum Bahasa Pemograman Tingkat Rendah', 'ahmad', 'C') # 5B?
+
+        db.session.commit()
+        print('Database berhasil diinisialisasi dengan data real dari gambar!')
 
 if __name__ == '__main__':
     with app.app_context():

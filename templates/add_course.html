@@ -23,14 +23,47 @@
             <div class="card-body">
                 <form method="POST">
                     <div class="mb-3">
+                        <label for="code" class="form-label">
+                            <i class="fas fa-barcode me-2"></i>Kode Mata Kuliah <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="code" name="code" required
+                            placeholder="Contoh: IT101" maxlength="20">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="semester" class="form-label">
+                                <i class="fas fa-layer-group me-2"></i>Semester <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="semester" name="semester" required>
+                                <option value="" selected disabled>Pilih Semester</option>
+                                {% for i in range(1, 9) %}
+                                <option value="{{ i }}">Semester {{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="sks" class="form-label">
+                                <i class="fas fa-weight me-2"></i>SKS <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="sks" name="sks" required>
+                                <option value="" selected disabled>Pilih SKS</option>
+                                {% for i in range(1, 5) %}
+                                <option value="{{ i }}">{{ i }} SKS</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="course_name" class="form-label">
                             <i class="fas fa-book me-2"></i>Nama Mata Kuliah <span class="text-danger">*</span>
                         </label>
-                        <input type="text" class="form-control" id="course_name" name="course_name" required 
-                               placeholder="Contoh: Introduction to Information Technology">
+                        <input type="text" class="form-control" id="course_name" name="course_name" required
+                            placeholder="Contoh: Introduction to Information Technology">
                         <div class="form-text">Gunakan nama mata kuliah yang resmi dan lengkap.</div>
                     </div>
-                    
+
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
                         <strong>Informasi:</strong>
@@ -40,7 +73,7 @@
                             <li>Mata kuliah dapat menggunakan berbagai laboratorium</li>
                         </ul>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between">
                         <a href="{{ url_for('courses') }}" class="btn btn-secondary">
                             <i class="fas fa-times me-2"></i>Batal
@@ -53,7 +86,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
         <!-- Predefined Courses -->
         <div class="card">
@@ -76,7 +109,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <div class="card mt-3">
             <div class="card-header bg-success text-white">
                 <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Tips Penamaan</h6>
@@ -95,20 +128,20 @@
 </div>
 
 <script>
-document.querySelector('form').addEventListener('submit', function(e) {
-    const courseName = document.getElementById('course_name').value.trim();
-    
-    if (!courseName) {
-        e.preventDefault();
-        alert('Nama mata kuliah harus diisi!');
-        return false;
-    }
-    
-    if (courseName.length < 3) {
-        e.preventDefault();
-        alert('Nama mata kuliah minimal 3 karakter!');
-        return false;
-    }
-});
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const courseName = document.getElementById('course_name').value.trim();
+
+        if (!courseName) {
+            e.preventDefault();
+            alert('Nama mata kuliah harus diisi!');
+            return false;
+        }
+
+        if (courseName.length < 3) {
+            e.preventDefault();
+            alert('Nama mata kuliah minimal 3 karakter!');
+            return false;
+        }
+    });
 </script>
 {% endblock %}

@@ -63,14 +63,14 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="semester" class="form-label">
-                                <i class="fas fa-graduation-cap me-2"></i>Semester <span class="text-danger">*</span>
+                            <label for="class_name" class="form-label">
+                                <i class="fas fa-users me-2"></i>Kelas <span class="text-danger">*</span>
                             </label>
-                            <select class="form-select" id="semester" name="semester" required>
-                                <option value="">-- Pilih Semester --</option>
-                                {% for i in range(1, 9) %}
-                                <option value="{{ i }}">Semester {{ i }}</option>
-                                {% endfor %}
+                            <select class="form-select" id="class_name" name="class_name" required>
+                                <option value="">-- Pilih Kelas --</option>
+                                <option value="A">Kelas A</option>
+                                <option value="B">Kelas B</option>
+                                <option value="C">Kelas C</option>
                             </select>
                         </div>
                     </div>
@@ -97,13 +97,11 @@
                             </label>
                             <select class="form-select" id="time_slot" name="time_slot" required>
                                 <option value="">-- Pilih Waktu --</option>
-                                <option value="07:00-09:00">07:00-09:00</option>
-                                <option value="09:00-11:00">09:00-11:00</option>
-                                <option value="11:00-13:00">11:00-13:00</option>
-                                <option value="13:00-15:00">13:00-15:00</option>
-                                <option value="15:00-17:00">15:00-17:00</option>
-                                <option value="17:00-19:00">17:00-19:00</option>
-                                <option value="19:00-21:00">19:00-21:00</option>
+                                <option value="08:00-09:40">08:00-09:40 (Sesi 1)</option>
+                                <option value="10:00-11:40">10:00-11:40 (Sesi 2)</option>
+                                <option value="13:00-14:40">13:00-14:40 (Sesi 3)</option>
+                                <option value="15:00-16:40">15:00-16:40 (Sesi 4)</option>
+                                <option value="17:00-18:40">17:00-18:40 (Sesi 5)</option>
                             </select>
                         </div>
                     </div>
@@ -159,31 +157,26 @@
                     <tbody>
                         <tr>
                             <td>1</td>
-                            <td>07:00-09:00</td>
+                            <td>08:00 - 09:40</td>
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td>09:00-11:00</td>
+                            <td>10:00 - 11:40</td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td colspan="2" class="text-center"><em>Istirahat (11:40 - 13:00)</em></td>
                         </tr>
                         <tr>
                             <td>3</td>
-                            <td>11:00-13:00</td>
+                            <td>13:00 - 14:40</td>
                         </tr>
                         <tr>
                             <td>4</td>
-                            <td>13:00-15:00</td>
+                            <td>15:00 - 16:40</td>
                         </tr>
                         <tr>
                             <td>5</td>
-                            <td>15:00-17:00</td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td>17:00-19:00</td>
-                        </tr>
-                        <tr>
-                            <td>7</td>
-                            <td>19:00-21:00</td>
+                            <td>17:00 - 18:40</td>
                         </tr>
                     </tbody>
                 </table>
@@ -198,10 +191,10 @@
         const labId = document.getElementById('lab_id').value;
         const day = document.getElementById('day').value;
         const timeSlot = document.getElementById('time_slot').value;
-        const semester = document.getElementById('semester').value;
+        const className = document.getElementById('class_name').value;
         const lecturerId = document.getElementById('lecturer_id').value;
 
-        if (!labId || !day || !timeSlot || !semester || !lecturerId) {
+        if (!labId || !day || !timeSlot || !className || !lecturerId) {
             e.preventDefault();
             alert('Mohon lengkapi semua field yang wajib diisi!');
             return false;
