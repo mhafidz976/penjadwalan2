@@ -4,7 +4,7 @@ Aplikasi berbasis web untuk manajemen penjadwalan laboratorium komputer di Fakul
 
 ## Deskripsi Sistem
 
-Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien dan mencegah konflik antara mata kuliah, dosen, ruangan, dan slot waktu.
+Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien dan mencegah konflik antara mata kuliah, dosen, ruangan, dan slot waktu. Versi terbaru telah disesuaikan dengan kurikulum Semester Ganjil 2025-2026.
 
 ## Fitur Utama
 
@@ -24,22 +24,23 @@ Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien
 - Tracking penggunaan lab
 
 ### 📚 Manajemen Mata Kuliah
-- 10 mata kuliah standar pre-defined
-- Tambah mata kuliah baru
+- **[BARU]** Kode Mata Kuliah Unik (misal: MM01)
+- **[BARU]** Informasi Semester (1-8) dan SKS (1-4)
 - Integrasi dengan sistem jadwal
 
 ### 📅 Manajemen Jadwal
-- Pembuatan jadwal otomatis
-- Validasi konflik (lab & dosen)
+- **[BARU]** Format Kelas (misal: 5A, 7B)
+- **[BARU]** Slot Waktu 100 Menit (08:00 - 18:40)
+- **[BARU]** Filter Jadwal berdasarkan Semester dan Kelas
+- Validasi otomatis konflik (lab & dosen)
 - Edit dan hapus jadwal
-- View berdasarkan role
 
 ### 📊 Dashboard & Laporan
-- Statistik penggunaan
-- Overview jadwal
+- Statistik real-time (Total Jadwal, Mata Kuliah, Lab, User)
+- Overview jadwal harian
 - Informasi sistem
 
-## Struktur Database
+## Struktur Database Terbaru
 
 ### Tabel Users
 - `id` - Primary Key
@@ -55,29 +56,28 @@ Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien
 
 ### Tabel Courses
 - `id` - Primary Key
+- `code` - Kode Mata Kuliah (Unique)
 - `course_name` - Nama mata kuliah
+- `semester` - Semester (1-8)
+- `sks` - Jumlah SKS
 
 ### Tabel Schedules
 - `id` - Primary Key
 - `course_id` - Foreign key ke courses
 - `lecturer_id` - Foreign key ke users
 - `lab_id` - Foreign key ke labs
-- `day` - Hari (Senin-Jumat)
-- `time_slot` - Slot waktu
-- `semester` - Semester akademik
+- `day` - Hari (Senin-Sabtu)
+- `time_slot` - Slot waktu (Pola 100 menit + Istirahat)
+- `class_name` - Nama Kelas (A, B, C)
 
-## Mata Kuliah Pre-defined
+## Slot Waktu Praktikum
 
-1. Introduction to Information Technology
-2. Programming Fundamentals
-3. Data Structures
-4. Database Systems
-5. Web Programming
-6. Computer Networks
-7. Operating Systems
-8. Software Engineering
-9. Artificial Intelligence
-10. Human-Computer Interaction
+1. **Sesi 1**: 08:00 - 09:40
+2. **Sesi 2**: 10:00 - 11:40
+3. **Istirahat**: 11:40 - 13:00
+4. **Sesi 3**: 13:00 - 14:40
+5. **Sesi 4**: 15:00 - 16:40
+6. **Sesi 5**: 17:00 - 18:40
 
 ## Instalasi & Setup
 
@@ -101,41 +101,27 @@ Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien
    ```bash
    python app.py
    ```
+   *Catatan: Saat dijalankan pertama kali, aplikasi akan otomatis membuat database dan mengisi data sampel dari jadwal Semester Ganjil 2025-2026.*
 
 4. **Akses aplikasi**
    - Buka browser: http://localhost:5000
-   - Atau: http://127.0.0.1:5000
 
-### Default Login
+### Akun Default
 
-Setelah first run, sistem akan otomatis membuat user default:
+- **Administrator**: `admin` / `admin123`
+- **Staff Lab**: `labstaff` / `staff123`
+- **Dosen**:
+    - `bayu` / `123456`
+    - `sutiyono` / `123456`
+    - `khilda` / `123456`
+    - `ahmad` / `123456`
+    - dll.
 
-- **Administrator**
-  - Username: `admin`
-  - Password: `admin123`
+## Teknologi
 
-- **Laboratory Staff**
-  - Username: `labstaff`
-  - Password: `staff123`
-
-- **Sample Lecturers**
-  - Username: `dosen1`, `dosen2`, `dosen3`
-  - Password: `dosen123`
-
-## Teknologi yang Digunakan
-
-### Backend
-- **Flask 2.3.3** - Web framework Python
-- **Flask-SQLAlchemy 3.0.5** - ORM database
-- **Werkzeug 2.3.7** - Security & utilities
-
-### Frontend
-- **Bootstrap 5.3.0** - CSS framework
-- **Font Awesome 6.0.0** - Icons
-- **Jinja2** - Template engine
-
-### Database
-- **SQLite** - Database development (file: database.db)
+- **Backend**: Flask, Flask-SQLAlchemy, Werkzeug
+- **Frontend**: Bootstrap 5, Font Awesome, Jinja2
+- **Database**: SQLite
 
 ## Struktur Project
 
@@ -143,150 +129,24 @@ Setelah first run, sistem akan otomatis membuat user default:
 penjadwalan2/
 ├── app.py                 # Main Flask application
 ├── requirements.txt       # Python dependencies
-├── database.db          # SQLite database file
-├── templates/           # HTML templates
-│   ├── base.html       # Base template
-│   ├── login.html      # Login page
-│   ├── dashboard.html  # Dashboard
-│   ├── schedules.html  # Schedule management
-│   ├── users.html      # User management
-│   ├── labs.html       # Lab management
-│   ├── courses.html    # Course management
-│   ├── add_*.html      # Add forms
-│   └── edit_*.html     # Edit forms
+├── database.db            # SQLite database file
+├── templates/             # HTML templates
+│   ├── base.html          # Base layout
+│   ├── dashboard.html     # Dashboard stats
+│   ├── schedules.html     # Schedule list & filters
+│   ├── courses.html       # Course management
+│   ├── ...                # Other templates
 ├── static/
-│   └── css/            # Custom CSS (if needed)
-│   └── js/             # Custom JavaScript (if needed)
-└── README.md           # This file
+└── README.md              # Project documentation
 ```
-
-## User Roles & Permissions
-
-### Administrator
-- ✅ Manajemen user (CRUD)
-- ✅ Manajemen laboratorium (CRUD)
-- ✅ Manajemen mata kuliah (CRUD)
-- ✅ Manajemen jadwal (CRUD)
-- ✅ View semua laporan
-
-### Laboratory Staff
-- ❌ Manajemen user
-- ✅ Manajemen laboratorium (CRUD)
-- ✅ Manajemen mata kuliah (CRUD)
-- ✅ Manajemen jadwal (CRUD)
-- ✅ View jadwal & laporan
-
-### Lecturer
-- ❌ Manajemen user
-- ❌ Manajemen laboratorium
-- ❌ Manajemen mata kuliah
-- ❌ Manajemen jadwal
-- ✅ View jadwal pribadi
-- ✅ View semua jadwal (read-only)
 
 ## Validasi Konflik
 
 Sistem secara otomatis memvalidasi:
-
-1. **Konflik Laboratorium**
-   - Satu lab tidak bisa dijadwalkan di waktu yang sama
-   - Cross-check dengan semester yang sama
-
-2. **Konflik Dosen**
-   - Satu dosen tidak bisa mengajar di waktu yang sama
-   - Mencegah double booking dosen
-
-3. **Input Validation**
-   - Required field validation
-   - Format validation
-   - Data integrity checks
-
-## Features Highlights
-
-### 🎨 Modern UI/UX
-- Bootstrap 5 responsive design
-- Clean academic interface
-- Font Awesome icons
-- Interactive components
-
-### 🔒 Security
-- Password hashing (Werkzeug)
-- Session-based authentication
-- Role-based access control
-- CSRF protection ready
-
-### 📱 Responsive
-- Mobile-friendly design
-- Tablet compatible
-- Desktop optimized
-
-### ⚡ Performance
-- Efficient database queries
-- Optimized templates
-- Minimal dependencies
-
-## Development & Deployment
-
-### Development Mode
-```bash
-python app.py
-```
-
-### Production Deployment
-Untuk production deployment, disarankan menggunakan:
-- Gunicorn atau uWSGI
-- Nginx sebagai reverse proxy
-- PostgreSQL/MySQL untuk production database
-- Environment variables untuk configuration
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Database not found**
-   - Pastikan `app.py` dijalankan sekali untuk inisialisasi database
-   - File `database.db` akan otomatis terbuat
-
-2. **Module not found**
-   - Install requirements: `pip install -r requirements.txt`
-   - Check Python version compatibility
-
-3. **Port already in use**
-   - Change port di `app.py`: `app.run(port=5001)`
-   - Atau kill process yang menggunakan port 5000
-
-## Future Enhancements
-
-- 📧 Email notifications
-- 📱 Mobile app
-- 🔄 Calendar integration
-- 📊 Advanced reporting
-- 🌐 Multi-language support
-- 📈 Analytics dashboard
-- 🖨️ Print schedules
-- 📤 Export to PDF/Excel
-
-## Contributing
-
-1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Create Pull Request
-
-## License
-
-This project is for educational purposes at Universitas Bale Bandung.
-
-## Support
-
-For technical support or questions:
-- Contact: FTI Support Team
-- Email: support@fti.ubl.ac.id
-- Location: Fakultas Teknologi Informasi, Universitas Bale Bandung
+1. **Konflik Laboratorium**: Satu lab tidak bisa digunakan untuk dua jadwal berbeda di waktu yang sama.
+2. **Konflik Dosen**: Satu dosen tidak bisa mengajar di dua tempat berbeda di waktu yang sama.
 
 ---
 
-**Developed by:** FTI Development Team  
-**Version:** 1.0.0  
-**Last Updated:** January 2024
+**Developed for:** Fakultas Teknologi Informasi, Universitas Bale Bandung  
+**Last Updated:** January 2026
