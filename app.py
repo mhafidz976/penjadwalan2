@@ -108,8 +108,11 @@ def dashboard():
     
     user = User.query.get(session['user_id'])
     schedules = Schedule.query.all()
+    courses = Course.query.all()
+    labs = Lab.query.all()
+    users = User.query.all() if user.role == 'admin' else []
     
-    return render_template('dashboard.html', user=user, schedules=schedules)
+    return render_template('dashboard.html', user=user, schedules=schedules, courses=courses, labs=labs, users=users)
 
 # User Management Routes (Admin only)
 @app.route('/users')
@@ -297,11 +300,17 @@ def schedules():
     # Apply filters from request args
     lab_id = request.args.get('lab_id')
     day = request.args.get('day')
+    semester = request.args.get('semester')
+    class_name = request.args.get('class_name')
     
     if lab_id:
         query = query.filter_by(lab_id=lab_id)
     if day:
         query = query.filter_by(day=day)
+    if class_name:
+        query = query.filter_by(class_name=class_name)
+    if semester:
+        query = query.join(Course).filter(Course.semester == semester)
         
     schedules = query.all()
     

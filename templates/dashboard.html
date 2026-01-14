@@ -31,7 +31,7 @@
             </div>
         </div>
     </div>
-    
+
     {% if user.role in ['admin', 'staff'] %}
     <div class="col-md-3">
         <div class="card bg-success text-white">
@@ -48,7 +48,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3">
         <div class="card bg-info text-white">
             <div class="card-body">
@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-    
+
     {% if user.role == 'admin' %}
     <div class="col-md-3">
         <div class="card bg-warning text-white">
@@ -139,63 +139,66 @@
             </div>
             <div class="card-body">
                 {% if schedules %}
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Mata Kuliah</th>
-                                    <th>Dosen</th>
-                                    <th>Lab</th>
-                                    <th>Hari</th>
-                                    <th>Waktu</th>
-                                    <th>Semester</th>
-                                    {% if user.role in ['admin', 'staff'] %}
-                                    <th>Aksi</th>
-                                    {% endif %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for schedule in schedules[:5] %}
-                                <tr>
-                                    <td>{{ schedule.course.course_name }}</td>
-                                    <td>{{ schedule.lecturer.full_name }}</td>
-                                    <td>{{ schedule.laboratory.lab_name }}</td>
-                                    <td>{{ schedule.day }}</td>
-                                    <td>{{ schedule.time_slot }}</td>
-                                    <td>{{ schedule.semester }}</td>
-                                    {% if user.role in ['admin', 'staff'] %}
-                                    <td>
-                                        <a href="{{ url_for('edit_schedule', id=schedule.id) }}" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="{{ url_for('delete_schedule', id=schedule.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?')">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
-                                    {% endif %}
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    {% if schedules|length > 5 %}
-                    <div class="text-center mt-3">
-                        <a href="{{ url_for('schedules') }}" class="btn btn-primary">
-                            Lihat Semua Jadwal ({{ schedules|length }} total)
-                        </a>
-                    </div>
-                    {% endif %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Mata Kuliah</th>
+                                <th>Dosen</th>
+                                <th>Lab</th>
+                                <th>Hari</th>
+                                <th>Waktu</th>
+                                <th>Kelas</th>
+                                {% if user.role in ['admin', 'staff'] %}
+                                <th>Aksi</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for schedule in schedules[:5] %}
+                            <tr>
+                                <td>{{ schedule.course.course_name }}</td>
+                                <td>{{ schedule.lecturer.full_name }}</td>
+                                <td>{{ schedule.laboratory.lab_name }}</td>
+                                <td>{{ schedule.day }}</td>
+                                <td>{{ schedule.time_slot }}</td>
+                                <td>{{ schedule.course.semester }}{{ schedule.class_name }}</td>
+                                {% if user.role in ['admin', 'staff'] %}
+                                <td>
+                                    <a href="{{ url_for('edit_schedule', id=schedule.id) }}"
+                                        class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ url_for('delete_schedule', id=schedule.id) }}"
+                                        class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if schedules|length > 5 %}
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('schedules') }}" class="btn btn-primary">
+                        Lihat Semua Jadwal ({{ schedules|length }} total)
+                    </a>
+                </div>
+                {% endif %}
                 {% else %}
-                    <div class="text-center py-4">
-                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">Belum ada jadwal tersedia</p>
-                        {% if user.role in ['admin', 'staff'] %}
-                        <a href="{{ url_for('add_schedule') }}" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Tambah Jadwal Pertama
-                        </a>
-                        {% endif %}
-                    </div>
+                <div class="text-center py-4">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Belum ada jadwal tersedia</p>
+                    {% if user.role in ['admin', 'staff'] %}
+                    <a href="{{ url_for('add_schedule') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Tambah Jadwal Pertama
+                    </a>
+                    {% endif %}
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -211,15 +214,15 @@
                     <div class="col-md-6">
                         <h6><i class="fas fa-info-circle me-2"></i>Tentang Sistem</h6>
                         <p class="mb-0">Sistem Penjadwalan Laboratorium Komputer<br>
-                        Fakultas Teknologi Informasi<br>
-                        Universitas Bale Bandung</p>
+                            Fakultas Teknologi Informasi<br>
+                            Universitas Bale Bandung</p>
                     </div>
                     <div class="col-md-6 text-md-end">
                         <h6><i class="fas fa-shield-alt me-2"></i>Keamanan</h6>
                         <p class="mb-0">Sistem dilengkapi dengan:<br>
-                        ✓ Autentikasi multi-role<br>
-                        ✓ Validasi anti-bentrok jadwal<br>
-                        ✓ Enkripsi password</p>
+                            ✓ Autentikasi multi-role<br>
+                            ✓ Validasi anti-bentrok jadwal<br>
+                            ✓ Enkripsi password</p>
                     </div>
                 </div>
             </div>
