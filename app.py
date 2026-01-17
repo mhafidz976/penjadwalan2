@@ -433,6 +433,9 @@ def delete_schedule(id):
     flash('Jadwal berhasil dihapus!', 'success')
     return redirect(url_for('schedules'))
 
+# Start of Export Routes block removed
+
+
 # Initialize database with sample data
 def init_sample_data():
     # Cek apakah sudah ada data
