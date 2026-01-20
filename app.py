@@ -314,6 +314,15 @@ def schedules():
         
     schedules = query.all()
     
+    # Custom sort for days
+    day_order = {
+        'Senin': 1, 'Selasa': 2, 'Rabu': 3, 
+        'Kamis': 4, 'Jumat': 5, 'Sabtu': 6, 'Minggu': 7
+    }
+    
+    # Sort by day index, then by time_slot
+    schedules.sort(key=lambda x: (day_order.get(x.day, 8), x.time_slot))
+    
     return render_template('schedules.html', schedules=schedules, user=user, labs=Lab.query.all())
 
 @app.route('/schedules/add', methods=['GET', 'POST'])

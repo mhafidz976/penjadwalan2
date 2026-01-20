@@ -49,23 +49,22 @@
                 <i class="fas fa-calendar-alt me-2"></i>
                 {% if user.role == 'lecturer' %}Jadwal Mengajar Saya{% else %}Manajemen Jadwal{% endif %}
             </h2>
-            {% if user.role in ['admin', 'staff'] %}
             <div class="no-print">
                 <button onclick="window.print()" class="btn btn-outline-dark me-2">
                     <i class="fas fa-print me-2"></i>Cetak
                 </button>
+                {% if user.role in ['admin', 'staff'] %}
                 <a href="{{ url_for('add_schedule') }}" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Tambah Jadwal
                 </a>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
     </div>
 </div>
 
 <!-- Filter Section -->
-{% if user.role in ['admin', 'staff'] %}
-<div class="row mb-4">
+<div class="row mb-4 no-print">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
@@ -134,7 +133,7 @@
         </div>
     </div>
 </div>
-{% endif %}
+
 
 <!-- Schedule Table -->
 <div class="row">
@@ -162,7 +161,7 @@
                                 <th style="width: 15%">Waktu</th>
                                 <th style="width: 10%">Kelas</th>
                                 {% if user.role in ['admin', 'staff'] %}
-                                <th>Aksi</th>
+                                <th class="no-print">Aksi</th>
                                 {% endif %}
                             </tr>
                         </thead>
@@ -191,7 +190,7 @@
                                         schedule.class_name }}</span>
                                 </td>
                                 {% if user.role in ['admin', 'staff'] %}
-                                <td>
+                                <td class="no-print">
                                     <div class="btn-group" role="group">
                                         <a href="{{ url_for('edit_schedule', id=schedule.id) }}"
                                             class="btn btn-sm btn-outline-primary" title="Edit">
