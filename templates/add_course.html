@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Tambah Mata Kuliah - Sistem Penjadwalan Laboratorium{% endblock %}
+{% block title %}Tambah Mata Praktikum - Sistem Penjadwalan Laboratorium{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="fas fa-plus me-2"></i>Tambah Mata Kuliah Baru</h2>
+            <h2><i class="fas fa-plus me-2"></i>Tambah Mata Praktikum Baru</h2>
             <a href="{{ url_for('courses') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Kembali
             </a>
@@ -18,13 +18,13 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Form Tambah Mata Kuliah</h5>
+                <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Form Tambah Mata Praktikum</h5>
             </div>
             <div class="card-body">
                 <form method="POST">
                     <div class="mb-3">
                         <label for="code" class="form-label">
-                            <i class="fas fa-barcode me-2"></i>Kode Mata Kuliah <span class="text-danger">*</span>
+                            <i class="fas fa-barcode me-2"></i>Kode Mata Praktikum <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" id="code" name="code" required
                             placeholder="Contoh: IT101" maxlength="20">
@@ -57,20 +57,20 @@
 
                     <div class="mb-3">
                         <label for="course_name" class="form-label">
-                            <i class="fas fa-book me-2"></i>Nama Mata Kuliah <span class="text-danger">*</span>
+                            <i class="fas fa-book me-2"></i>Nama Mata Praktikum <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" id="course_name" name="course_name" required
                             placeholder="Contoh: Introduction to Information Technology">
-                        <div class="form-text">Gunakan nama mata kuliah yang resmi dan lengkap.</div>
+                        <div class="form-text">Gunakan nama mata praktikum yang resmi dan lengkap.</div>
                     </div>
 
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
                         <strong>Informasi:</strong>
                         <ul class="mb-0 mt-2">
-                            <li>Nama mata kuliah harus unik</li>
-                            <li>Mata kuliah dapat dijadwalkan untuk beberapa dosen</li>
-                            <li>Mata kuliah dapat menggunakan berbagai laboratorium</li>
+                            <li>Nama mata praktikum harus unik</li>
+                            <li>Mata praktikum dapat dijadwalkan untuk beberapa dosen</li>
+                            <li>Mata praktikum dapat menggunakan berbagai laboratorium</li>
                         </ul>
                     </div>
 
@@ -79,7 +79,7 @@
                             <i class="fas fa-times me-2"></i>Batal
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>Simpan Mata Kuliah
+                            <i class="fas fa-save me-2"></i>Simpan Mata Praktikum
                         </button>
                     </div>
                 </form>
@@ -91,10 +91,10 @@
         <!-- Predefined Courses -->
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h6 class="mb-0"><i class="fas fa-list me-2"></i>Mata Kuliah Standar</h6>
+                <h6 class="mb-0"><i class="fas fa-list me-2"></i>Mata Praktikum Standar</h6>
             </div>
             <div class="card-body">
-                <h6>Daftar mata kuliah standar FTI:</h6>
+                <h6>Daftar mata praktikum standar FTI:</h6>
                 <ul class="mb-0 small">
                     <li>Praktikum Algoritma dan Pemrograman 1</li>
                     <li>Praktikum Sistem Basis Data</li>
@@ -133,13 +133,13 @@
 
         if (!courseName) {
             e.preventDefault();
-            alert('Nama mata kuliah harus diisi!');
+            alert('Nama mata praktikum harus diisi!');
             return false;
         }
 
         if (courseName.length < 3) {
             e.preventDefault();
-            alert('Nama mata kuliah minimal 3 karakter!');
+            alert('Nama mata praktikum minimal 3 karakter!');
             return false;
         }
     });

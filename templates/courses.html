@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Manajemen Mata Kuliah - Sistem Penjadwalan Laboratorium{% endblock %}
+{% block title %}Manajemen Mata Praktikum - Sistem Penjadwalan Laboratorium{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="fas fa-book me-2"></i>Manajemen Mata Kuliah</h2>
+            <h2><i class="fas fa-book me-2"></i>Manajemen Mata Praktikum</h2>
             <a href="{{ url_for('add_course') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Tambah Mata Kuliah
+                <i class="fas fa-plus me-2"></i>Tambah Mata Praktikum
             </a>
         </div>
     </div>
@@ -19,7 +19,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">
-                    <i class="fas fa-list me-2"></i>Daftar Mata Kuliah
+                    <i class="fas fa-list me-2"></i>Daftar Mata Praktikum
                     <span class="badge bg-secondary ms-2">{{ courses|length }}</span>
                 </h5>
             </div>
@@ -33,7 +33,7 @@
                                 <h6 class="mb-0">
                                     <i class="fas fa-book me-2"></i>
                                     <span class="badge bg-light text-success me-1">{{ course.code }}</span>
-                                    {{ course.course_name }}
+                                    {{ course.practicum_name }}
                                 </h6>
                             </div>
                             <div class="card-body">
@@ -64,7 +64,7 @@
                                     </a>
                                     <a href="{{ url_for('delete_course', id=course.id) }}"
                                         class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus mata kuliah {{ course.course_name }}?')">
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus mata praktikum {{ course.practicum_name }}?')">
                                         <i class="fas fa-trash me-1"></i>Hapus
                                     </a>
                                 </div>
@@ -76,10 +76,10 @@
                 {% else %}
                 <div class="text-center py-5">
                     <i class="fas fa-book fa-4x text-muted mb-3"></i>
-                    <h5 class="text-muted">Belum ada mata kuliah tersedia</h5>
-                    <p class="text-muted">Mulai dengan menambah mata kuliah pertama.</p>
+                    <h5 class="text-muted">Belum ada mata praktikum tersedia</h5>
+                    <p class="text-muted">Mulai dengan menambah mata praktikum pertama.</p>
                     <a href="{{ url_for('add_course') }}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Tambah Mata Kuliah Pertama
+                        <i class="fas fa-plus me-2"></i>Tambah Mata Praktikum Pertama
                     </a>
                 </div>
                 {% endif %}
@@ -96,7 +96,7 @@
             <div class="card-body text-center">
                 <i class="fas fa-book fa-3x mb-3"></i>
                 <h4>{{ courses|length }}</h4>
-                <p class="mb-0">Total Mata Kuliah</p>
+                <p class="mb-0">Total Mata Praktikum</p>
             </div>
         </div>
     </div>
@@ -114,7 +114,7 @@
             <div class="card-body text-center">
                 <i class="fas fa-user-tie fa-3x mb-3"></i>
                 <h4>{{ courses|selectattr('schedules')|list|length }}</h4>
-                <p class="mb-0">Mata Kuliah Terjadwal</p>
+                <p class="mb-0">Mata Praktikum Terjadwal</p>
             </div>
         </div>
     </div>

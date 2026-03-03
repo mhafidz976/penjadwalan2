@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Edit Mata Kuliah - Sistem Penjadwalan Laboratorium{% endblock %}
+{% block title %}Edit Mata Praktikum - Sistem Penjadwalan Laboratorium{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="fas fa-edit me-2"></i>Edit Mata Kuliah</h2>
+            <h2><i class="fas fa-edit me-2"></i>Edit Mata Praktikum</h2>
             <a href="{{ url_for('courses') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Kembali
             </a>
@@ -18,13 +18,13 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Form Edit Mata Kuliah</h5>
+                <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Form Edit Mata Praktikum</h5>
             </div>
             <div class="card-body">
                 <form method="POST">
                     <div class="mb-3">
                         <label for="code" class="form-label">
-                            <i class="fas fa-barcode me-2"></i>Kode Mata Kuliah <span class="text-danger">*</span>
+                            <i class="fas fa-barcode me-2"></i>Kode Mata Praktikum <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" id="code" name="code" value="{{ course.code }}" required
                             maxlength="20">
@@ -58,16 +58,16 @@
 
                     <div class="mb-3">
                         <label for="course_name" class="form-label">
-                            <i class="fas fa-book me-2"></i>Nama Mata Kuliah <span class="text-danger">*</span>
+                            <i class="fas fa-book me-2"></i>Nama Mata Praktikum <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" id="course_name" name="course_name"
-                            value="{{ course.course_name }}" required>
-                        <div class="form-text">Gunakan nama mata kuliah yang resmi dan lengkap.</div>
+                            value="{{ course.practicum_name }}" required>
+                        <div class="form-text">Gunakan nama mata praktikum yang resmi dan lengkap.</div>
                     </div>
 
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Perhatian:</strong> Mengubah nama mata kuliah akan mempengaruhi semua jadwal yang
+                        <strong>Perhatian:</strong> Mengubah nama mata praktikum akan mempengaruhi semua jadwal yang
                         terkait.
                     </div>
 
@@ -76,7 +76,7 @@
                             <i class="fas fa-times me-2"></i>Batal
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>Update Mata Kuliah
+                            <i class="fas fa-save me-2"></i>Update Mata Praktikum
                         </button>
                     </div>
                 </form>
@@ -88,13 +88,13 @@
         <!-- Current Course Info -->
         <div class="card">
             <div class="card-header bg-info text-white">
-                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informasi Mata Kuliah Saat Ini</h6>
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informasi Mata Praktikum Saat Ini</h6>
             </div>
             <div class="card-body">
                 <table class="table table-sm">
                     <tr>
                         <td><strong>Nama:</strong></td>
-                        <td>{{ course.course_name }}</td>
+                        <td>{{ course.practicum_name }}</td>
                     </tr>
                     <tr>
                         <td><strong>Course ID:</strong></td>
@@ -136,13 +136,13 @@
 
         if (!courseName) {
             e.preventDefault();
-            alert('Nama mata kuliah harus diisi!');
+            alert('Nama mata praktikum harus diisi!');
             return false;
         }
 
         if (courseName.length < 3) {
             e.preventDefault();
-            alert('Nama mata kuliah minimal 3 karakter!');
+            alert('Nama mata praktikum minimal 3 karakter!');
             return false;
         }
     });

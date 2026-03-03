@@ -39,7 +39,7 @@
                 <div class="d-flex justify-content-between">
                     <div>
                         <h4 class="mb-0">{{ courses|length if courses else 0 }}</h4>
-                        <p class="mb-0">Mata Kuliah</p>
+                        <p class="mb-0">Mata Praktikum</p>
                     </div>
                     <div class="align-self-center">
                         <i class="fas fa-book fa-2x"></i>
@@ -109,7 +109,7 @@
                     {% endif %}
                     <div class="col-md-3 mb-2">
                         <a href="{{ url_for('add_course') }}" class="btn btn-info w-100">
-                            <i class="fas fa-book-medical me-2"></i>Tambah Mata Kuliah
+                            <i class="fas fa-book-medical me-2"></i>Tambah Mata Praktikum
                         </a>
                     </div>
                     <div class="col-md-3 mb-2">
@@ -143,7 +143,7 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Mata Kuliah</th>
+                                <th>Mata Praktikum</th>
                                 <th>Dosen</th>
                                 <th>Lab</th>
                                 <th>Hari</th>
@@ -157,12 +157,12 @@
                         <tbody>
                             {% for schedule in schedules[:5] %}
                             <tr>
-                                <td>{{ schedule.course.course_name }}</td>
+                                <td>{{ schedule.practicum.practicum_name }}</td>
                                 <td>{{ schedule.lecturer.full_name }}</td>
                                 <td>{{ schedule.laboratory.lab_name }}</td>
                                 <td>{{ schedule.day }}</td>
                                 <td>{{ schedule.time_slot }}</td>
-                                <td>{{ schedule.course.semester }}{{ schedule.class_name }}</td>
+                                <td>{{ schedule.practicum.semester }}{{ schedule.class_name }}</td>
                                 {% if user.role in ['admin', 'staff'] %}
                                 <td>
                                     <a href="{{ url_for('edit_schedule', id=schedule.id) }}"

@@ -4,7 +4,7 @@ Aplikasi berbasis web untuk manajemen penjadwalan laboratorium komputer di Fakul
 
 ## Deskripsi Sistem
 
-Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien dan mencegah konflik antara mata kuliah, dosen, ruangan, dan slot waktu. Versi terbaru telah disesuaikan dengan kurikulum Semester Ganjil 2025-2026.
+Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien dan mencegah konflik antara mata praktikum, dosen, ruangan, dan slot waktu. Versi terbaru telah disesuaikan dengan kurikulum Semester Ganjil 2025-2026.
 
 ## Fitur Utama
 
@@ -23,8 +23,8 @@ Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien
 - Informasi kapasitas ruangan
 - Tracking penggunaan lab
 
-### 📚 Manajemen Mata Kuliah
-- **[BARU]** Kode Mata Kuliah Unik (misal: MM01)
+### 📚 Manajemen Mata Praktikum
+- **[BARU]** Kode Mata Praktikum Unik (misal: MM01)
 - **[BARU]** Informasi Semester (1-8) dan SKS (1-4)
 - Integrasi dengan sistem jadwal
 
@@ -36,7 +36,7 @@ Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien
 - Edit dan hapus jadwal
 
 ### 📊 Dashboard & Laporan
-- Statistik real-time (Total Jadwal, Mata Kuliah, Lab, User)
+- Statistik real-time (Total Jadwal, Mata Praktikum, Lab, User)
 - Overview jadwal harian
 - Informasi sistem
 
@@ -56,8 +56,8 @@ Sistem ini dirancang untuk mengelola jadwal laboratorium komputer secara efisien
 
 ### Tabel Courses
 - `id` - Primary Key
-- `code` - Kode Mata Kuliah (Unique)
-- `course_name` - Nama mata kuliah
+- `code` - Kode Mata Praktikum (Unique)
+- `practicum_name` - Nama mata praktikum
 - `semester` - Semester (1-8)
 - `sks` - Jumlah SKS
 

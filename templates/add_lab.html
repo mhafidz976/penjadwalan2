@@ -26,30 +26,30 @@
                         <label for="lab_name" class="form-label">
                             <i class="fas fa-flask me-2"></i>Nama Laboratorium <span class="text-danger">*</span>
                         </label>
-                        <input type="text" class="form-control" id="lab_name" name="lab_name" required 
-                               placeholder="Contoh: Lab Komputer 1">
+                        <input type="text" class="form-control" id="lab_name" name="lab_name" required
+                            placeholder="Contoh: Lab Komputer 1">
                         <div class="form-text">Gunakan nama yang deskriptif dan mudah diidentifikasi.</div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="capacity" class="form-label">
                             <i class="fas fa-users me-2"></i>Kapasitas <span class="text-danger">*</span>
                         </label>
-                        <input type="number" class="form-control" id="capacity" name="capacity" required 
-                               min="1" max="100" placeholder="Contoh: 30">
+                        <input type="number" class="form-control" id="capacity" name="capacity" required min="1"
+                            max="100" placeholder="Contoh: 30">
                         <div class="form-text">Jumlah maksimal komputer/kursi yang tersedia.</div>
                     </div>
-                    
+
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
                         <strong>Informasi:</strong>
                         <ul class="mb-0 mt-2">
                             <li>Nama laboratorium harus unik</li>
                             <li>Kapasitas akan digunakan untuk validasi jadwal</li>
-                            <li>Laboratorium dapat dijadwalkan untuk beberapa mata kuliah</li>
+                            <li>Laboratorium dapat dijadwalkan untuk beberapa mata praktikum</li>
                         </ul>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between">
                         <a href="{{ url_for('labs') }}" class="btn btn-secondary">
                             <i class="fas fa-times me-2"></i>Batal
@@ -62,7 +62,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
         <!-- Lab Information -->
         <div class="card">
@@ -80,7 +80,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <div class="card mt-3">
             <div class="card-header bg-warning text-dark">
                 <h6 class="mb-0"><i class="fas fa-users me-2"></i>Kapasitas Standar</h6>
@@ -98,21 +98,21 @@
 </div>
 
 <script>
-document.querySelector('form').addEventListener('submit', function(e) {
-    const labName = document.getElementById('lab_name').value.trim();
-    const capacity = document.getElementById('capacity').value;
-    
-    if (!labName) {
-        e.preventDefault();
-        alert('Nama laboratorium harus diisi!');
-        return false;
-    }
-    
-    if (!capacity || capacity < 1 || capacity > 100) {
-        e.preventDefault();
-        alert('Kapasitas harus diisi dengan angka antara 1-100!');
-        return false;
-    }
-});
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const labName = document.getElementById('lab_name').value.trim();
+        const capacity = document.getElementById('capacity').value;
+
+        if (!labName) {
+            e.preventDefault();
+            alert('Nama laboratorium harus diisi!');
+            return false;
+        }
+
+        if (!capacity || capacity < 1 || capacity > 100) {
+            e.preventDefault();
+            alert('Kapasitas harus diisi dengan angka antara 1-100!');
+            return false;
+        }
+    });
 </script>
 {% endblock %}

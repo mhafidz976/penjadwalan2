@@ -30,19 +30,19 @@ class Lab(db.Model):
     # Relasi dengan schedule
     schedules = db.relationship('Schedule', backref='laboratory', lazy=True)
 
-class Course(db.Model):
+class Practicum(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(20), unique=True, nullable=False)
-    course_name = db.Column(db.String(100), nullable=False)
+    practicum_name = db.Column(db.String(100), nullable=False)
     semester = db.Column(db.Integer, nullable=False)  # 1-8
     sks = db.Column(db.Integer, nullable=False)  # 1-4
     
     # Relasi dengan schedule
-    schedules = db.relationship('Schedule', backref='course', lazy=True)
+    schedules = db.relationship('Schedule', backref='practicum', lazy=True)
 
 class Schedule(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('practicum.id'), nullable=False)
     lecturer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=False)
     day = db.Column(db.String(10), nullable=False)  # Senin, Selasa, etc.
@@ -108,11 +108,11 @@ def dashboard():
     
     user = User.query.get(session['user_id'])
     schedules = Schedule.query.all()
-    courses = Course.query.all()
+    practicums = Practicum.query.all()
     labs = Lab.query.all()
     users = User.query.all() if user.role == 'admin' else []
     
-    return render_template('dashboard.html', user=user, schedules=schedules, courses=courses, labs=labs, users=users)
+    return render_template('dashboard.html', user=user, schedules=schedules, courses=practicums, labs=labs, users=users)
 
 # User Management Routes (Admin only)
 @app.route('/users')
@@ -225,28 +225,28 @@ def delete_lab(id):
 @app.route('/courses')
 @role_required('admin', 'staff')
 def courses():
-    courses = Course.query.all()
-    return render_template('courses.html', courses=courses)
+    practicums = Practicum.query.all()
+    return render_template('courses.html', courses=practicums)
 
 @app.route('/courses/add', methods=['GET', 'POST'])
 @role_required('admin', 'staff')
 def add_course():
     if request.method == 'POST':
         code = request.form['code']
-        course_name = request.form['course_name']
+        practicum_name = request.form['course_name']
         semester = request.form['semester']
         sks = request.form['sks']
         
         # Cek kode unik
-        if Course.query.filter_by(code=code).first():
-            flash('Kode mata kuliah sudah ada!', 'danger')
+        if Practicum.query.filter_by(code=code).first():
+            flash('Kode mata praktikum sudah ada!', 'danger')
             return redirect(url_for('add_course'))
         
-        new_course = Course(code=code, course_name=course_name, semester=semester, sks=sks)
-        db.session.add(new_course)
+        new_practicum = Practicum(code=code, practicum_name=practicum_name, semester=semester, sks=sks)
+        db.session.add(new_practicum)
         db.session.commit()
         
-        flash('Mata kuliah berhasil ditambahkan!', 'success')
+        flash('Mata praktikum berhasil ditambahkan!', 'success')
         return redirect(url_for('courses'))
     
     return render_template('add_course.html')
@@ -254,33 +254,33 @@ def add_course():
 @app.route('/courses/edit/<int:id>', methods=['GET', 'POST'])
 @role_required('admin', 'staff')
 def edit_course(id):
-    course = Course.query.get_or_404(id)
+    practicum = Practicum.query.get_or_404(id)
     
     if request.method == 'POST':
         new_code = request.form['code']
         # Cek unik jika kode berubah
-        if new_code != course.code and Course.query.filter_by(code=new_code).first():
-            flash('Kode mata kuliah sudah digunakan!', 'danger')
+        if new_code != practicum.code and Practicum.query.filter_by(code=new_code).first():
+            flash('Kode mata praktikum sudah digunakan!', 'danger')
             return redirect(url_for('edit_course', id=id))
 
-        course.code = new_code
-        course.course_name = request.form['course_name']
-        course.semester = request.form['semester']
-        course.sks = request.form['sks']
+        practicum.code = new_code
+        practicum.practicum_name = request.form['course_name']
+        practicum.semester = request.form['semester']
+        practicum.sks = request.form['sks']
         db.session.commit()
         
-        flash('Mata kuliah berhasil diperbarui!', 'success')
+        flash('Mata praktikum berhasil diperbarui!', 'success')
         return redirect(url_for('courses'))
     
-    return render_template('edit_course.html', course=course)
+    return render_template('edit_course.html', course=practicum)
 
 @app.route('/courses/delete/<int:id>')
 @role_required('admin', 'staff')
 def delete_course(id):
-    course = Course.query.get_or_404(id)
-    db.session.delete(course)
+    practicum = Practicum.query.get_or_404(id)
+    db.session.delete(practicum)
     db.session.commit()
-    flash('Mata kuliah berhasil dihapus!', 'success')
+    flash('Mata praktikum berhasil dihapus!', 'success')
     return redirect(url_for('courses'))
 
 # Schedule Management Routes
@@ -310,7 +310,7 @@ def schedules():
     if class_name:
         query = query.filter_by(class_name=class_name)
     if semester:
-        query = query.join(Course).filter(Course.semester == semester)
+        query = query.join(Practicum).filter(Practicum.semester == semester)
         
     schedules = query.all()
     
@@ -373,7 +373,7 @@ def add_schedule():
         flash('Jadwal berhasil ditambahkan!', 'success')
         return redirect(url_for('schedules'))
     
-    courses = Course.query.all()
+    courses = Practicum.query.all()
     lecturers = User.query.filter_by(role='lecturer').all()
     labs = Lab.query.all()
     
@@ -423,7 +423,7 @@ def edit_schedule(id):
         flash('Jadwal berhasil diperbarui!', 'success')
         return redirect(url_for('schedules'))
     
-    courses = Course.query.all()
+    courses = Practicum.query.all()
     lecturers = User.query.filter_by(role='lecturer').all()
     labs = Lab.query.all()
     
@@ -502,7 +502,7 @@ def init_sample_data():
         lab1 = labs[0]
         lab2 = labs[1]
 
-        # Create Courses
+        # Create Practicums
         # Format: (Code, Name, Semester, SKS)
         courses_data = [
             ('TIF301', 'Praktikum Sistem Multimedia', 3, 3),
@@ -527,7 +527,7 @@ def init_sample_data():
         
         course_objs = {}
         for code, name, sem, sks in courses_data:
-            course = Course(code=code, course_name=name, semester=sem, sks=sks)
+            course = Practicum(code=code, practicum_name=name, semester=sem, sks=sks)
             db.session.add(course)
             course_objs[name] = course # Map by name for easy lookup
         
